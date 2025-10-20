@@ -1,0 +1,774 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Paramètres - Market</title>
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --bg-primary: #0a0a0a;
+            --bg-secondary: #141414;
+            --bg-tertiary: #1f1f1f;
+            --text-primary: #e0e0e0;
+            --text-secondary: #a0a0a0;
+            --text-tertiary: #707070;
+            --border-color: #2a2a2a;
+            --danger-primary: #dc2626;
+            --danger-secondary: #991b1b;
+            --danger-gradient: linear-gradient(135deg, #dc2626 0%, #7f1d1d 100%);
+            --warning-primary: #f59e0b;
+            --accent-primary: #8b5cf6;
+            --shadow-sm: 0 1px 3px rgba(0,0,0,0.5);
+            --shadow-md: 0 4px 12px rgba(0,0,0,0.6);
+            --shadow-lg: 0 8px 24px rgba(0,0,0,0.7);
+            --shadow-xl: 0 12px 32px rgba(220, 38, 38, 0.3);
+            --shadow-glow: 0 0 20px rgba(220, 38, 38, 0.5);
+            --transition-base: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+            background: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.6;
+            overflow-x: hidden;
+            min-height: 100vh;
+            position: relative;
+        }
+
+        /* ANIMATED BACKGROUND */
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: 
+                radial-gradient(circle at 20% 50%, rgba(220, 38, 38, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 80% 80%, rgba(139, 92, 246, 0.1) 0%, transparent 50%),
+                radial-gradient(circle at 40% 20%, rgba(220, 38, 38, 0.05) 0%, transparent 50%);
+            animation: backgroundPulse 10s ease-in-out infinite;
+            pointer-events: none;
+            z-index: 0;
+        }
+
+        @keyframes backgroundPulse {
+            0%, 100% { opacity: 0.5; }
+            50% { opacity: 1; }
+        }
+
+        /* GLITCH EFFECT */
+        @keyframes glitch {
+            0% { transform: translate(0); }
+            20% { transform: translate(-2px, 2px); }
+            40% { transform: translate(-2px, -2px); }
+            60% { transform: translate(2px, 2px); }
+            80% { transform: translate(2px, -2px); }
+            100% { transform: translate(0); }
+        }
+
+        /* HEADER DARK */
+        .header {
+            position: relative;
+            padding: 40px 20px;
+            text-align: center;
+            background: linear-gradient(180deg, var(--bg-secondary) 0%, var(--bg-primary) 100%);
+            border-bottom: 2px solid var(--danger-primary);
+            box-shadow: var(--shadow-lg);
+            z-index: 1;
+        }
+
+        .header::after {
+            content: '';
+            position: absolute;
+            bottom: -2px;
+            left: 0;
+            width: 100%;
+            height: 2px;
+            background: var(--danger-gradient);
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        .back-btn {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            width: 44px;
+            height: 44px;
+            background: var(--bg-tertiary);
+            border: 2px solid var(--border-color);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: var(--transition-base);
+            color: var(--text-primary);
+            text-decoration: none;
+        }
+
+        .back-btn:hover {
+            background: var(--danger-primary);
+            border-color: var(--danger-primary);
+            box-shadow: var(--shadow-glow);
+            transform: translateX(-4px);
+        }
+
+        .header-icon {
+            font-size: 48px;
+            margin-bottom: 16px;
+            color: var(--danger-primary);
+            animation: float 3s ease-in-out infinite;
+            filter: drop-shadow(0 0 10px var(--danger-primary));
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(0px); }
+            50% { transform: translateY(-10px); }
+        }
+
+        .header-title {
+            font-size: 32px;
+            font-weight: 800;
+            margin-bottom: 8px;
+            background: var(--danger-gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            letter-spacing: -1px;
+            animation: slideInDown 0.6s ease;
+        }
+
+        @keyframes slideInDown {
+            0% { transform: translateY(-30px); opacity: 0; }
+            100% { transform: translateY(0); opacity: 1; }
+        }
+
+        .header-subtitle {
+            color: var(--text-secondary);
+            font-size: 14px;
+            font-weight: 500;
+            animation: fadeIn 0.8s ease 0.2s both;
+        }
+
+        @keyframes fadeIn {
+            0% { opacity: 0; }
+            100% { opacity: 1; }
+        }
+
+        /* CONTAINER */
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 32px 20px;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* DANGER ZONE CARD */
+        .section-card {
+            background: var(--bg-secondary);
+            border-radius: 16px;
+            margin-bottom: 24px;
+            border: 2px solid var(--border-color);
+            overflow: hidden;
+            transition: var(--transition-base);
+            animation: scaleIn 0.5s ease both;
+        }
+
+        @keyframes scaleIn {
+            0% { transform: scale(0.9); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        .section-card.danger {
+            border-color: var(--danger-primary);
+            box-shadow: var(--shadow-xl);
+        }
+
+        .section-card.danger:hover {
+            box-shadow: var(--shadow-glow);
+            transform: translateY(-2px);
+        }
+
+        .section-header {
+            padding: 20px;
+            background: var(--bg-tertiary);
+            border-bottom: 2px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .section-card.danger .section-header {
+            background: linear-gradient(135deg, rgba(220, 38, 38, 0.2) 0%, rgba(127, 29, 29, 0.2) 100%);
+            border-bottom-color: var(--danger-primary);
+        }
+
+        .section-icon {
+            width: 40px;
+            height: 40px;
+            background: var(--danger-gradient);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 20px;
+            animation: pulse 2s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.05); }
+        }
+
+        .section-title {
+            font-size: 18px;
+            font-weight: 700;
+            color: var(--text-primary);
+        }
+
+        .section-body {
+            padding: 24px 20px;
+        }
+
+        /* FORM GROUPS */
+        .form-group {
+            margin-bottom: 24px;
+            animation: fadeInUp 0.6s ease both;
+        }
+
+        .form-group:nth-child(1) { animation-delay: 0.1s; }
+        .form-group:nth-child(2) { animation-delay: 0.2s; }
+        .form-group:nth-child(3) { animation-delay: 0.3s; }
+
+        @keyframes fadeInUp {
+            0% { transform: translateY(20px); opacity: 0; }
+            100% { transform: translateY(0); opacity: 1; }
+        }
+
+        .form-label {
+            display: block;
+            font-size: 13px;
+            font-weight: 600;
+            color: var(--text-secondary);
+            margin-bottom: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .form-input {
+            width: 100%;
+            padding: 14px 16px;
+            background: var(--bg-primary);
+            border: 2px solid var(--border-color);
+            border-radius: 12px;
+            color: var(--text-primary);
+            font-size: 15px;
+            transition: var(--transition-base);
+        }
+
+        .form-input:focus {
+            outline: none;
+            border-color: var(--accent-primary);
+            box-shadow: 0 0 0 4px rgba(139, 92, 246, 0.1);
+        }
+
+        .form-input:disabled {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+
+        /* BUTTONS */
+        .btn {
+            padding: 14px 24px;
+            border: none;
+            border-radius: 12px;
+            font-weight: 600;
+            font-size: 15px;
+            cursor: pointer;
+            transition: var(--transition-base);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            width: 100%;
+        }
+
+        .btn-primary { background: var(--accent-primary); color: white; }
+        .btn-primary:hover { background: #7c3aed; transform: translateY(-2px); box-shadow: 0 8px 20px rgba(139, 92, 246, 0.4); }
+        .btn-danger { background: var(--danger-gradient); color: white; animation: dangerPulse 2s ease-in-out infinite; }
+        @keyframes dangerPulse {
+            0%, 100% { box-shadow: 0 0 0 0 rgba(220, 38, 38, 0.7); }
+            50% { box-shadow: 0 0 20px 10px rgba(220, 38, 38, 0); }
+        }
+        .btn-danger:hover { background: linear-gradient(135deg, #991b1b 0%, #7f1d1d 100%); transform: translateY(-2px); box-shadow: var(--shadow-glow); animation: shake 0.5s ease; }
+        @keyframes shake { 0%, 100% { transform: translateX(0) translateY(-2px); } 25% { transform: translateX(-5px) translateY(-2px); } 75% { transform: translateX(5px) translateY(-2px); } }
+        .btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none !important; }
+        .btn-group { display: flex; gap: 12px; margin-top: 16px; }
+        .btn-secondary { background: var(--bg-tertiary); color: var(--text-primary); border: 2px solid var(--border-color); }
+        .btn-secondary:hover { background: var(--bg-primary); border-color: var(--accent-primary); }
+
+        /* MODAL */
+        .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0, 0, 0, 0.95); z-index: 1000; animation: fadeIn 0.3s ease; backdrop-filter: blur(5px); }
+        .modal-overlay.show { display: flex; align-items: center; justify-content: center; padding: 20px; }
+        .modal { background: var(--bg-secondary); border-radius: 20px; max-width: 500px; width: 100%; border: 3px solid var(--danger-primary); box-shadow: var(--shadow-glow); animation: modalSlideIn 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55); overflow: hidden; }
+        @keyframes modalSlideIn { 0% { transform: scale(0.5) rotate(-5deg); opacity: 0; } 100% { transform: scale(1) rotate(0deg); opacity: 1; } }
+        .modal-header { padding: 24px; background: var(--danger-gradient); text-align: center; border-bottom: 3px solid var(--danger-secondary); }
+        .modal-icon { font-size: 64px; color: white; margin-bottom: 16px; filter: drop-shadow(0 0 20px rgba(255, 255, 255, 0.5)); }
+        .modal-title { font-size: 24px; font-weight: 800; color: white; margin-bottom: 8px; text-shadow: 0 2px 4px rgba(0,0,0,0.3); }
+        .modal-subtitle { color: rgba(255,255,255,0.9); font-size: 14px; }
+        .modal-body { padding: 24px; }
+        .modal-message { color: var(--text-primary); font-size: 15px; line-height: 1.6; margin-bottom: 16px; text-align: center; }
+        .modal-actions { display: flex; gap: 12px; }
+
+        /* ALERT POPUP */
+        .alert-popup { position: fixed; top: -200px; left: 50%; transform: translateX(-50%); background: var(--bg-secondary); border: 3px solid var(--danger-primary); border-radius: 16px; padding: 20px; min-width: 320px; max-width: 90%; box-shadow: var(--shadow-glow); z-index: 2000; transition: top 0.5s cubic-bezier(0.68, -0.55, 0.265, 1.55); }
+        .alert-popup.show { top: 20px; }
+        .alert-content { display: flex; align-items: center; gap: 16px; }
+        .alert-icon { font-size: 32px; color: var(--danger-primary); }
+        .alert-text { flex: 1; color: var(--text-primary); font-weight: 600; font-size: 15px; }
+        .alert-close { background: transparent; border: none; color: var(--text-secondary); font-size: 20px; cursor: pointer; padding: 4px; }
+        .alert-close:hover { color: var(--danger-primary); transform: rotate(90deg); }
+
+        /* LOADER */
+        .loader { display: none; width: 40px; height: 40px; border: 4px solid var(--border-color); border-top-color: var(--danger-primary); border-radius: 50%; animation: spin 0.8s linear infinite; margin: 20px auto; }
+        @keyframes spin { to { transform: rotate(360deg); } }
+        .loader.show { display: block; }
+
+        /* RESPONSIVE */
+        @media (max-width: 768px) {
+            .container { padding: 24px 16px; }
+            .modal { margin: 0 16px; }
+        }
+    </style>
+</head>
+<body>
+    <!-- HEADER -->
+    <div class="header">
+        <a href="profil.html" class="back-btn" aria-label="Retour au profil">
+            <i class="fas fa-arrow-left"></i>
+        </a>
+        <div class="header-icon" aria-hidden="true">
+            <i class="fas fa-cog"></i>
+        </div>
+        <h1 class="header-title">Paramètres du compte</h1>
+        <p class="header-subtitle">Gérez vos informations et la sécurité</p>
+    </div>
+
+    <!-- CONTAINER -->
+    <div class="container">
+        <!-- PROFILE UPDATE SECTION -->
+        <div class="section-card">
+            <div class="section-header">
+                <div class="section-icon">
+                    <i class="fas fa-user-edit"></i>
+                </div>
+                <h2 class="section-title">Profil</h2>
+            </div>
+            <div class="section-body">
+                <div class="warning-banner" style="display:none" id="profileInfoBanner">
+                    <i class="fas fa-info-circle warning-icon"></i>
+                    <div class="warning-text">Vos modifications sensibles sont protégées par votre mot de passe.</div>
+                </div>
+
+                <form id="profileForm">
+                    <div class="form-group">
+                        <label class="form-label">Prénom</label>
+                        <input type="text" id="prenomInput" class="form-input" placeholder="Votre prénom">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Nom</label>
+                        <input type="text" id="nomInput" class="form-input" placeholder="Votre nom">
+                    </div>
+
+                    <div class="form-group">
+                        <label class="form-label">Adresse Email</label>
+                        <input type="email" id="emailInput" class="form-input" placeholder="votre@email.com">
+                    </div>
+
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-shield-alt"></i>
+                        Confirmer avec mot de passe
+                    </button>
+                </form>
+            </div>
+        </div>
+
+        <!-- DELETE ACCOUNT SECTION -->
+        <div class="section-card danger">
+            <div class="section-header">
+                <div class="section-icon">
+                    <i class="fas fa-trash-alt"></i>
+                </div>
+                <h2 class="section-title">Supprimer le compte</h2>
+            </div>
+            <div class="section-body">
+                <div class="warning-banner">
+                    <i class="fas fa-triangle-exclamation warning-icon"></i>
+                    <div class="warning-text">
+                        <strong>ATTENTION :</strong> Cette action est IRRÉVERSIBLE. Toutes vos données seront définitivement supprimées.
+                    </div>
+                </div>
+
+                <button id="deleteAccountBtn" class="btn btn-danger">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    Supprimer Définitivement mon Compte
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- PASSWORD CONFIRMATION MODAL -->
+    <div id="verificationModal" class="modal-overlay" aria-hidden="true" role="dialog" aria-labelledby="verifyTitle">
+        <div class="modal">
+            <div class="modal-header">
+                <div class="modal-icon">
+                    <i class="fas fa-shield-halved"></i>
+                </div>
+                <h3 class="modal-title" id="verifyTitle">Confirmation requise</h3>
+                <p class="modal-subtitle">Entrez votre mot de passe pour continuer</p>
+            </div>
+            <div class="modal-body">
+                <p class="modal-message">Pour confirmer cette action sensible, saisissez votre mot de passe actuel.</p>
+
+                <div class="form-group">
+                    <label class="form-label" for="passwordConfirmInput">Mot de passe</label>
+                    <input type="password" id="passwordConfirmInput" class="form-input" placeholder="••••••••" autocomplete="current-password" />
+                </div>
+
+                <div class="loader" id="modalLoader"></div>
+
+                <div class="modal-actions">
+                    <button class="btn btn-secondary" style="flex: 1;" id="cancelBtn">
+                        <i class="fas fa-times"></i> Annuler
+                    </button>
+                    <button class="btn btn-primary" style="flex: 2;" id="verifyBtn">
+                        <i class="fas fa-check"></i> Vérifier
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- DELETE CONFIRMATION MODAL -->
+    <div id="deleteModal" class="modal-overlay" aria-hidden="true" role="dialog" aria-labelledby="deleteTitle">
+        <div class="modal">
+            <div class="modal-header">
+                <div class="modal-icon">
+                    <i class="fas fa-exclamation-triangle"></i>
+                </div>
+                <h3 class="modal-title" id="deleteTitle">Confirmation de suppression</h3>
+                <p class="modal-subtitle">Cette action est irréversible</p>
+            </div>
+            <div class="modal-body">
+                <p class="modal-message" style="color: var(--danger-primary); font-weight: 600;">
+                    Vous êtes sur le point de supprimer définitivement votre compte et l'ensemble de vos données (articles, commentaires, réactions, messages). Cette action ne peut pas être annulée.
+                </p>
+
+                <div class="loader" id="deleteLoader"></div>
+
+                <div class="modal-actions">
+                    <button class="btn btn-secondary" style="flex: 1;" id="cancelDeleteBtn">
+                        <i class="fas fa-shield"></i> Non, Annuler
+                    </button>
+                    <button class="btn btn-danger" style="flex: 1;" id="confirmDeleteBtn">
+                        <i class="fas fa-skull"></i> Oui, Supprimer
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- ALERT POPUP -->
+    <div id="alertPopup" class="alert-popup" role="status" aria-live="polite">
+        <div class="alert-content">
+            <i class="fas fa-circle-info alert-icon"></i>
+            <div class="alert-text" id="alertText"></div>
+            <button class="alert-close" onclick="hideAlert()">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+    </div>
+
+    <!-- SCRIPTS -->
+    <script src="supabaseClient.js"></script>
+    <script>
+        const { supabase, getCurrentUser, getUserProfile } = window.supabaseClient;
+        let currentUser = null;
+        let userProfile = null;
+        let pendingAction = null;
+        let pendingData = null;
+
+        // INIT
+        window.addEventListener('DOMContentLoaded', async () => {
+            try {
+                currentUser = await getCurrentUser();
+                if (!currentUser) {
+                    window.location.href = 'connexion.html';
+                    return;
+                }
+
+                userProfile = await getUserProfile(currentUser.id);
+                if (!userProfile) {
+                    window.location.href = 'connexion.html';
+                    return;
+                }
+
+                loadUserData();
+                setupEventListeners();
+                document.getElementById('profileInfoBanner').style.display = 'flex';
+            } catch (error) {
+                console.error('Erreur initialisation:', error);
+                window.location.href = 'connexion.html';
+            }
+        });
+
+        function loadUserData() {
+            document.getElementById('prenomInput').value = userProfile.prenom || '';
+            document.getElementById('nomInput').value = userProfile.nom || '';
+            document.getElementById('emailInput').value = currentUser.email || '';
+        }
+
+        function setupEventListeners() {
+            // Profile form submit
+            document.getElementById('profileForm').addEventListener('submit', async (e) => {
+                e.preventDefault();
+                await handleProfileUpdate();
+            });
+
+            // Delete account
+            document.getElementById('deleteAccountBtn').addEventListener('click', () => {
+                showDeleteModal();
+            });
+
+            // Modal actions
+            document.getElementById('cancelBtn').addEventListener('click', hideVerificationModal);
+            document.getElementById('verifyBtn').addEventListener('click', handleVerification);
+            document.getElementById('cancelDeleteBtn').addEventListener('click', hideDeleteModal);
+            document.getElementById('confirmDeleteBtn').addEventListener('click', handleDeleteRequest);
+
+            // Close modals on ESC
+            document.addEventListener('keydown', (e) => {
+                if (e.key === 'Escape') {
+                    hideVerificationModal();
+                    hideDeleteModal();
+                    hideAlert();
+                }
+            });
+
+            // Prevent accidental close when modals shown
+            window.addEventListener('beforeunload', (e) => {
+                if (document.getElementById('verificationModal').classList.contains('show') ||
+                    document.getElementById('deleteModal').classList.contains('show')) {
+                    e.preventDefault();
+                    e.returnValue = '';
+                    return 'Êtes-vous sûr de vouloir quitter ? Vos modifications seront perdues.';
+                }
+            });
+        }
+
+        // PROFILE UPDATE
+        async function handleProfileUpdate() {
+            const prenom = document.getElementById('prenomInput').value.trim();
+            const nom = document.getElementById('nomInput').value.trim();
+            const email = document.getElementById('emailInput').value.trim();
+
+            if (!prenom || !nom || !email) {
+                showAlert('⚠️ Tous les champs sont obligatoires !', 'error');
+                return;
+            }
+
+            if (!isValidEmail(email)) {
+                showAlert('⚠️ Adresse email invalide !', 'error');
+                return;
+            }
+
+            const hasChanges = prenom !== userProfile.prenom || nom !== userProfile.nom || email !== currentUser.email;
+            if (!hasChanges) {
+                showAlert('ℹ️ Aucune modification détectée', 'info');
+                return;
+            }
+
+            pendingAction = 'update_profile';
+            pendingData = { prenom, nom, email };
+            showVerificationModal();
+            showAlert('Entrez votre mot de passe pour confirmer.', 'info');
+        }
+
+        function isValidEmail(email) {
+            return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+        }
+
+        // PASSWORD CONFIRMATION HANDLER
+        async function handleVerification() {
+            const password = document.getElementById('passwordConfirmInput').value;
+            if (!password) {
+                showAlert('⚠️ Veuillez entrer votre mot de passe.', 'error');
+                return;
+            }
+
+            document.getElementById('modalLoader').classList.add('show');
+            document.getElementById('verifyBtn').disabled = true;
+
+            try {
+                const { error } = await supabase.auth.signInWithPassword({ email: currentUser.email, password });
+                if (error) throw error;
+
+                if (pendingAction === 'update_profile') {
+                    await executeProfileUpdate();
+                } else if (pendingAction === 'delete_account') {
+                    await executeAccountDeletion();
+                }
+
+                hideVerificationModal();
+            } catch (err) {
+                showAlert('Mot de passe incorrect. Réessayez.', 'error');
+            } finally {
+                document.getElementById('modalLoader').classList.remove('show');
+                document.getElementById('verifyBtn').disabled = false;
+            }
+        }
+
+        async function executeProfileUpdate() {
+            try {
+                const { prenom, nom, email } = pendingData;
+
+                // Update profile
+                const { error: profileError } = await supabase
+                    .from('users_profile')
+                    .update({ prenom, nom })
+                    .eq('user_id', currentUser.id);
+
+                if (profileError) throw profileError;
+
+                // Update email if changed (Supabase peut demander confirmation selon configuration)
+                if (email !== currentUser.email) {
+                    const { error: emailError } = await supabase.auth.updateUser({ email });
+                    if (emailError) throw emailError;
+                }
+
+                showAlert('Profil mis à jour avec succès.', 'success');
+                setTimeout(() => { window.location.reload(); }, 1500);
+            } catch (error) {
+                console.error('Erreur mise à jour:', error);
+                showAlert('❌ Erreur lors de la mise à jour du profil', 'error');
+            } finally {
+                pendingAction = null;
+                pendingData = null;
+            }
+        }
+
+        // DELETE ACCOUNT
+        function showDeleteModal() {
+            document.getElementById('deleteModal').classList.add('show');
+            showAlert('Confirmez la suppression de votre compte.', 'warning');
+        }
+
+        function hideDeleteModal() {
+            document.getElementById('deleteModal').classList.remove('show');
+            showAlert('Suppression annulée.', 'success');
+        }
+
+        async function handleDeleteRequest() {
+            document.getElementById('deleteLoader').classList.add('show');
+            document.getElementById('confirmDeleteBtn').disabled = true;
+            try {
+                // Passer à la confirmation par mot de passe
+                pendingAction = 'delete_account';
+                hideDeleteModal();
+                showVerificationModal();
+                showAlert('Entrez votre mot de passe pour confirmer la suppression.', 'warning');
+            } finally {
+                document.getElementById('deleteLoader').classList.remove('show');
+                document.getElementById('confirmDeleteBtn').disabled = false;
+            }
+        }
+
+        async function executeAccountDeletion() {
+            try {
+                document.getElementById('modalLoader').classList.add('show');
+                showAlert('💀 Suppression en cours...', 'error');
+
+                // Delete in order: reactions, comments, articles, profile, etc.
+                await supabase.from('article_reactions').delete().eq('user_id', currentUser.id);
+                await supabase.from('video_reactions').delete().eq('user_id', currentUser.id);
+                await supabase.from('sessions_commentaires').delete().eq('user_id', currentUser.id);
+                await supabase.from('video_commentaires').delete().eq('user_id', currentUser.id);
+                await supabase.from('articles').delete().eq('user_id', currentUser.id);
+                await supabase.from('videos').delete().eq('user_id', currentUser.id);
+                await supabase.from('notifications').delete().eq('user_id', currentUser.id);
+                await supabase.from('messages').delete().eq('sender_id', currentUser.id);
+                await supabase.from('messages').delete().eq('receiver_id', currentUser.id);
+                await supabase.from('users_profile').delete().eq('user_id', currentUser.id);
+
+                await supabase.auth.signOut();
+
+                showAlert('Compte supprimé avec succès. Redirection...', 'success');
+                setTimeout(() => { window.location.href = 'connexion.html'; }, 1500);
+            } catch (error) {
+                console.error('Erreur suppression:', error);
+                showAlert('❌ Erreur lors de la suppression. Contactez le support.', 'error');
+            } finally {
+                document.getElementById('modalLoader').classList.remove('show');
+                pendingAction = null;
+            }
+        }
+
+        // MODALS
+        function showVerificationModal() {
+            document.getElementById('verificationModal').classList.add('show');
+            const input = document.getElementById('passwordConfirmInput');
+            input.value = '';
+            setTimeout(() => input.focus(), 300);
+        }
+
+        function hideVerificationModal() {
+            document.getElementById('verificationModal').classList.remove('show');
+            pendingAction = null;
+            pendingData = null;
+        }
+
+        // ALERTS
+        function showAlert(message, type = 'info') {
+            const popup = document.getElementById('alertPopup');
+            const text = document.getElementById('alertText');
+            const icon = popup.querySelector('.alert-icon');
+
+            text.textContent = message;
+
+            const map = {
+              error: 'fas fa-circle-exclamation alert-icon',
+              success: 'fas fa-circle-check alert-icon',
+              warning: 'fas fa-triangle-exclamation alert-icon',
+              info: 'fas fa-circle-info alert-icon'
+            };
+            icon.className = map[type] || map.info;
+
+            popup.classList.add('show');
+            setTimeout(() => { hideAlert(); }, 5000);
+        }
+
+        function hideAlert() {
+            document.getElementById('alertPopup').classList.remove('show');
+        }
+
+        // Debug info
+        console.log('%c🔧 PARAMÈTRES DEBUG', 'color: #8b5cf6; font-size: 14px; font-weight: bold;');
+        console.log('User:', currentUser);
+        console.log('Profile:', userProfile);
+        console.log('Supabase connected:', !!supabase);
+    </script>
+</body>
+</html>
