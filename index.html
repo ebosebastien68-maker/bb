@@ -311,107 +311,6 @@
         }
 
         /* ============================================
-           HISTORY SEARCH PANEL
-        ============================================ */
-        .history-panel {
-            position: fixed;
-            top: var(--navbar-height);
-            left: 50%;
-            transform: translateX(-50%) translateY(-120%);
-            width: min(600px, calc(100% - 32px));
-            background: var(--bg-secondary);
-            border-radius: 16px;
-            box-shadow: var(--shadow-xl);
-            padding: 24px;
-            z-index: 999;
-            transition: transform 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
-            max-height: 80vh;
-            overflow-y: auto;
-        }
-
-        .history-panel.show {
-            transform: translateX(-50%) translateY(16px);
-        }
-
-        .history-panel h3 {
-            margin-bottom: 16px;
-            color: var(--text-primary);
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-
-        .user-result {
-            padding: 16px;
-            background: var(--bg-tertiary);
-            border-radius: 12px;
-            margin-bottom: 12px;
-            cursor: pointer;
-            transition: var(--transition-base);
-            display: flex;
-            align-items: center;
-            gap: 12px;
-        }
-
-        .user-result:hover {
-            background: var(--accent-primary);
-            color: white;
-            transform: translateX(4px);
-        }
-
-        .user-result .avatar {
-            width: 48px;
-            height: 48px;
-        }
-
-        .user-result-info {
-            flex: 1;
-        }
-
-        .user-result-name {
-            font-weight: 700;
-            font-size: 16px;
-        }
-
-        .user-result-role {
-            font-size: 12px;
-            opacity: 0.8;
-            text-transform: capitalize;
-        }
-
-        /* ============================================
-           BACK BUTTON
-        ============================================ */
-        .back-button {
-            position: fixed;
-            top: calc(var(--navbar-height) + 16px);
-            left: 16px;
-            width: 48px;
-            height: 48px;
-            background: var(--accent-gradient);
-            border: none;
-            border-radius: 50%;
-            color: white;
-            font-size: 20px;
-            cursor: pointer;
-            display: none;
-            align-items: center;
-            justify-content: center;
-            box-shadow: var(--shadow-lg);
-            z-index: 998;
-            transition: var(--transition-base);
-        }
-
-        .back-button.show {
-            display: flex;
-        }
-
-        .back-button:hover {
-            transform: scale(1.1);
-            box-shadow: var(--shadow-xl);
-        }
-
-        /* ============================================
            CONTAINER PRINCIPAL
         ============================================ */
         .main-container {
@@ -438,36 +337,6 @@
                 opacity: 1;
                 transform: translateY(0);
             }
-        }
-
-        .user-header {
-            background: var(--accent-gradient);
-            color: white;
-            padding: 24px;
-            border-radius: 16px;
-            margin-bottom: 24px;
-            text-align: center;
-            box-shadow: var(--shadow-md);
-        }
-
-        .user-header .avatar {
-            width: 80px;
-            height: 80px;
-            margin: 0 auto 16px;
-            font-size: 32px;
-        }
-
-        .user-header h2 {
-            font-size: 24px;
-            margin-bottom: 8px;
-        }
-
-        .user-header .stats {
-            display: flex;
-            gap: 24px;
-            justify-content: center;
-            margin-top: 16px;
-            font-size: 14px;
         }
 
         /* ============================================
@@ -986,20 +855,13 @@
                 padding: 16px 12px;
             }
 
-            .search-panel,
-            .history-panel {
+            .search-panel {
                 width: calc(100% - 24px);
             }
 
             .article-card,
             .video-card {
                 border-radius: 12px;
-            }
-
-            .back-button {
-                width: 40px;
-                height: 40px;
-                font-size: 18px;
             }
         }
     </style>
@@ -1030,21 +892,12 @@
                 <span>Notifications</span>
                 <span class="badge" id="notif-badge" style="display: none;">0</span>
             </button>
-            <button class="nav-btn" id="history-btn">
-                <i class="fas fa-history"></i>
-                <span>Historique</span>
-            </button>
             <button class="nav-btn" id="menu-btn">
                 <i class="fas fa-bars"></i>
                 <span>Menu</span>
             </button>
         </div>
     </nav>
-
-    <!-- BACK BUTTON -->
-    <button class="back-button" id="back-button">
-        <i class="fas fa-arrow-left"></i>
-    </button>
 
     <!-- SEARCH PANEL -->
     <div class="search-panel" id="search-panel">
@@ -1054,6 +907,9 @@
             </button>
             <button class="search-tab" data-search-type="videos">
                 <i class="fas fa-video"></i> Vidéos
+            </button>
+            <button class="search-tab" data-search-type="historique">
+                <i class="fas fa-history"></i> Historique
             </button>
         </div>
 
@@ -1072,25 +928,36 @@
                 Rechercher
             </button>
         </div>
-    </div>
 
-    <!-- HISTORY PANEL -->
-    <div class="history-panel" id="history-panel">
-        <h3>
-            <i class="fas fa-history"></i>
-            Rechercher l'historique d'un utilisateur
-        </h3>
-        <div class="search-input-group">
-            <i class="fas fa-user search-icon"></i>
-            <input type="text" class="search-input" id="history-search-input" placeholder="Nom ou prénom de l'utilisateur...">
-        </div>
-        <div id="user-results"></div>
+        <!-- RÉSULTATS RECHERCHE UTILISATEURS -->
+        <div id="user-search-results" style="display: none; margin-top: 16px; max-height: 300px; overflow-y: auto;"></div>
     </div>
 
     <!-- MAIN CONTAINER -->
     <div class="main-container">
         <!-- HOME PAGE -->
         <div id="home-page" class="page active">
+            <!-- BOUTON RETOUR -->
+            <div id="back-to-home-btn" style="display: none; margin-bottom: 16px;">
+                <button onclick="backToHome()" style="
+                    padding: 12px 24px;
+                    background: var(--accent-gradient);
+                    border: none;
+                    border-radius: 12px;
+                    color: white;
+                    font-weight: 600;
+                    cursor: pointer;
+                    display: flex;
+                    align-items: center;
+                    gap: 8px;
+                    transition: var(--transition-base);
+                    box-shadow: var(--shadow-md);
+                ">
+                    <i class="fas fa-arrow-left"></i>
+                    Retour à l'accueil
+                </button>
+            </div>
+
             <div id="loader" class="loader">
                 <div class="spinner"></div>
                 <p style="margin-top: 16px; color: var(--text-tertiary); font-weight: 500;">Chargement du contenu...</p>
@@ -1126,7 +993,7 @@
         let allContent = [];
         let searchType = 'articles';
         let userReactionsCache = {};
-        let currentViewUserId = null; // Pour suivre l'utilisateur dont on affiche l'historique
+        let isShowingUserHistory = false; // ✅ NOUVEAU : État historique utilisateur
 
         // THEME TOGGLE
         const themeToggle = document.getElementById('theme-toggle');
@@ -1157,162 +1024,10 @@
             if (e.target.closest('.nav-btn[data-page="home"]')) {
                 searchPanelVisible = !searchPanelVisible;
                 searchPanel.classList.toggle('show', searchPanelVisible);
-                document.getElementById('history-panel').classList.remove('show');
-            } else if (!e.target.closest('.search-panel') && !e.target.closest('.history-panel')) {
+            } else if (!e.target.closest('.search-panel')) {
                 searchPanelVisible = false;
                 searchPanel.classList.remove('show');
             }
-        });
-
-        // HISTORY PANEL TOGGLE
-        const historyPanel = document.getElementById('history-panel');
-        const historyBtn = document.getElementById('history-btn');
-        const backButton = document.getElementById('back-button');
-
-        historyBtn.addEventListener('click', (e) => {
-            e.stopPropagation();
-            historyPanel.classList.toggle('show');
-            searchPanel.classList.remove('show');
-        });
-
-        document.addEventListener('click', (e) => {
-            if (!e.target.closest('.history-panel') && !e.target.closest('#history-btn')) {
-                historyPanel.classList.remove('show');
-            }
-        });
-
-        // HISTORY SEARCH
-        const historySearchInput = document.getElementById('history-search-input');
-        const userResultsContainer = document.getElementById('user-results');
-
-        historySearchInput.addEventListener('input', debounce(async (e) => {
-            const query = e.target.value.trim().toLowerCase();
-            if (query.length < 2) {
-                userResultsContainer.innerHTML = '';
-                return;
-            }
-
-            try {
-                const { data: users, error } = await supabase
-                    .from('users_profile')
-                    .select('user_id, prenom, nom, role')
-                    .or(`prenom.ilike.%${query}%,nom.ilike.%${query}%`)
-                    .limit(10);
-
-                if (error) throw error;
-
-                if (users.length === 0) {
-                    userResultsContainer.innerHTML = `
-                        <div class="empty-state">
-                            <i class="fas fa-user-slash"></i>
-                            <p>Aucun utilisateur trouvé</p>
-                        </div>`;
-                    return;
-                }
-
-                userResultsContainer.innerHTML = users.map(user => {
-                    const initials = `${user.prenom[0]}${user.nom[0]}`.toUpperCase();
-                    return `
-                        <div class="user-result" onclick="viewUserHistory('${user.user_id}', '${user.prenom}', '${user.nom}', '${user.role}')">
-                            <div class="avatar">${initials}</div>
-                            <div class="user-result-info">
-                                <div class="user-result-name">${user.prenom} ${user.nom}</div>
-                                <div class="user-result-role">${user.role}</div>
-                            </div>
-                            <i class="fas fa-chevron-right"></i>
-                        </div>
-                    `;
-                }).join('');
-            } catch (error) {
-                console.error('Erreur recherche utilisateurs:', error);
-                userResultsContainer.innerHTML = '<p style="color: #ff4757; padding: 20px;">Erreur de recherche</p>';
-            }
-        }, 300));
-
-        // VIEW USER HISTORY
-        window.viewUserHistory = async function(userId, prenom, nom, role) {
-            currentViewUserId = userId;
-            historyPanel.classList.remove('show');
-            
-            document.getElementById('loader').style.display = 'block';
-            document.getElementById('content-container').innerHTML = '';
-
-            try {
-                const [articlesResult, videosResult] = await Promise.all([
-                    supabase
-                        .from('articles')
-                        .select('*, users_profile(prenom, nom, role), article_images(image_url)')
-                        .eq('user_id', userId)
-                        .order('date_created', { ascending: false }),
-                    supabase
-                        .from('videos')
-                        .select('*, users_profile(prenom, nom, role)')
-                        .eq('user_id', userId)
-                        .order('date_created', { ascending: false })
-                ]);
-
-                if (articlesResult.error) throw articlesResult.error;
-                if (videosResult.error) throw videosResult.error;
-
-                const articles = articlesResult.data || [];
-                const videos = videosResult.data || [];
-
-                const userContent = [
-                    ...articles.map(a => ({ ...a, type: 'article' })),
-                    ...videos.map(v => ({ ...v, type: 'video' }))
-                ].sort((a, b) => new Date(b.date_created) - new Date(a.date_created));
-
-                document.getElementById('loader').style.display = 'none';
-
-                const container = document.getElementById('content-container');
-                
-                // En-tête utilisateur
-                const initials = `${prenom[0]}${nom[0]}`.toUpperCase();
-                const userHeader = document.createElement('div');
-                userHeader.className = 'user-header';
-                userHeader.innerHTML = `
-                    <div class="avatar">${initials}</div>
-                    <h2>${prenom} ${nom}</h2>
-                    <div style="text-transform: capitalize; opacity: 0.9;">${role}</div>
-                    <div class="stats">
-                        <div><strong>${articles.length}</strong> Articles</div>
-                        <div><strong>${videos.length}</strong> Vidéos</div>
-                        <div><strong>${articles.length + videos.length}</strong> Total</div>
-                    </div>
-                `;
-                container.appendChild(userHeader);
-
-                if (userContent.length === 0) {
-                    container.innerHTML += `
-                        <div class="empty-state">
-                            <i class="fas fa-folder-open"></i>
-                            <h3>Aucun contenu publié</h3>
-                            <p>Cet utilisateur n'a pas encore publié de contenu</p>
-                        </div>`;
-                } else {
-                    userContent.forEach(item => {
-                        if (item.type === 'article') {
-                            container.appendChild(createArticleCard(item));
-                        } else {
-                            container.appendChild(createVideoCard(item));
-                        }
-                    });
-                }
-
-                // Afficher le bouton retour
-                backButton.classList.add('show');
-            } catch (error) {
-                console.error('Erreur chargement historique:', error);
-                document.getElementById('loader').innerHTML = 
-                    '<p style="color: #ff4757;">Erreur de chargement de l\'historique</p>';
-            }
-        };
-
-        // BACK TO HOME
-        backButton.addEventListener('click', () => {
-            currentViewUserId = null;
-            backButton.classList.remove('show');
-            loadContent();
         });
 
         // SEARCH TABS
@@ -1321,8 +1036,22 @@
                 document.querySelectorAll('.search-tab').forEach(t => t.classList.remove('active'));
                 tab.classList.add('active');
                 searchType = tab.dataset.searchType;
-                document.getElementById('search-input').placeholder = 
-                    searchType === 'articles' ? 'Rechercher des articles...' : 'Rechercher des vidéos...';
+                
+                const searchInput = document.getElementById('search-input');
+                const userResults = document.getElementById('user-search-results');
+                
+                if (searchType === 'historique') {
+                    searchInput.placeholder = 'Rechercher un utilisateur...';
+                    userResults.style.display = 'none';
+                } else if (searchType === 'articles') {
+                    searchInput.placeholder = 'Rechercher des articles...';
+                    userResults.style.display = 'none';
+                } else {
+                    searchInput.placeholder = 'Rechercher des vidéos...';
+                    userResults.style.display = 'none';
+                }
+                
+                searchInput.value = '';
             });
         });
 
@@ -1332,8 +1061,30 @@
             if (e.key === 'Enter') performSearch();
         });
 
-        function performSearch() {
+        // ✅ RECHERCHE EN TEMPS RÉEL POUR HISTORIQUE
+        document.getElementById('search-input').addEventListener('input', (e) => {
+            if (searchType === 'historique') {
+                const query = e.target.value.trim();
+                if (query.length >= 2) {
+                    searchUsers(query);
+                } else {
+                    document.getElementById('user-search-results').style.display = 'none';
+                }
+            }
+        });
+
+        async function performSearch() {
             const query = document.getElementById('search-input').value.trim().toLowerCase();
+            
+            if (searchType === 'historique') {
+                if (!query) {
+                    showToast('⚠️ Entrez un nom d\'utilisateur');
+                    return;
+                }
+                await searchUsers(query);
+                return;
+            }
+            
             if (!query) {
                 displayContent(allContent);
                 return;
@@ -1358,6 +1109,151 @@
             searchPanel.classList.remove('show');
         }
 
+        // ✅ NOUVELLE FONCTION : RECHERCHE UTILISATEURS
+        async function searchUsers(query) {
+            try {
+                const { data: users, error } = await supabase
+                    .from('users_profile')
+                    .select('user_id, prenom, nom, role')
+                    .or(`prenom.ilike.%${query}%,nom.ilike.%${query}%`)
+                    .order('prenom');
+
+                if (error) throw error;
+
+                const resultsContainer = document.getElementById('user-search-results');
+                
+                if (!users || users.length === 0) {
+                    resultsContainer.innerHTML = `
+                        <div style="padding: 16px; text-align: center; color: var(--text-tertiary);">
+                            <i class="fas fa-user-slash" style="font-size: 32px; margin-bottom: 8px;"></i>
+                            <p>Aucun utilisateur trouvé</p>
+                        </div>`;
+                    resultsContainer.style.display = 'block';
+                    return;
+                }
+
+                resultsContainer.innerHTML = users.map(user => `
+                    <div class="user-result-item" onclick="showUserHistory('${user.user_id}')" style="
+                        padding: 12px 16px;
+                        display: flex;
+                        align-items: center;
+                        gap: 12px;
+                        cursor: pointer;
+                        transition: var(--transition-base);
+                        border-bottom: 1px solid var(--border-color);
+                    " onmouseover="this.style.background='var(--bg-tertiary)'" onmouseout="this.style.background='transparent'">
+                        <div class="avatar" style="width: 40px; height: 40px; font-size: 14px;">
+                            ${user.prenom[0]}${user.nom[0]}
+                        </div>
+                        <div style="flex: 1;">
+                            <div style="font-weight: 600; color: var(--text-primary);">
+                                ${user.prenom} ${user.nom}
+                            </div>
+                            <div style="font-size: 12px; color: var(--text-tertiary); text-transform: capitalize;">
+                                ${user.role}
+                            </div>
+                        </div>
+                        <i class="fas fa-chevron-right" style="color: var(--text-tertiary);"></i>
+                    </div>
+                `).join('');
+                
+                resultsContainer.style.display = 'block';
+            } catch (error) {
+                console.error('Erreur recherche utilisateurs:', error);
+                showToast('❌ Erreur de recherche');
+            }
+        }
+
+        // ✅ NOUVELLE FONCTION : AFFICHER HISTORIQUE UTILISATEUR
+        async function showUserHistory(userId) {
+            try {
+                searchPanel.classList.remove('show');
+                document.getElementById('loader').style.display = 'block';
+                document.getElementById('content-container').innerHTML = '';
+                
+                const [articlesResult, videosResult, userResult] = await Promise.all([
+                    supabase
+                        .from('articles')
+                        .select('*, users_profile(prenom, nom, role), article_images(image_url)')
+                        .eq('user_id', userId)
+                        .order('date_created', { ascending: false }),
+                    supabase
+                        .from('videos')
+                        .select('*, users_profile(prenom, nom, role)')
+                        .eq('user_id', userId)
+                        .order('date_created', { ascending: false }),
+                    supabase
+                        .from('users_profile')
+                        .select('prenom, nom, role')
+                        .eq('user_id', userId)
+                        .single()
+                ]);
+
+                if (articlesResult.error) throw articlesResult.error;
+                if (videosResult.error) throw videosResult.error;
+                if (userResult.error) throw userResult.error;
+
+                const articles = articlesResult.data || [];
+                const videos = videosResult.data || [];
+                const userInfo = userResult.data;
+
+                const userContent = [
+                    ...articles.map(a => ({ ...a, type: 'article' })),
+                    ...videos.map(v => ({ ...v, type: 'video' }))
+                ].sort((a, b) => new Date(b.date_created) - new Date(a.date_created));
+
+                document.getElementById('loader').style.display = 'none';
+                document.getElementById('back-to-home-btn').style.display = 'block';
+                isShowingUserHistory = true;
+
+                if (userContent.length === 0) {
+                    document.getElementById('content-container').innerHTML = `
+                        <div class="empty-state">
+                            <i class="fas fa-folder-open"></i>
+                            <h3>Aucune publication</h3>
+                            <p>${userInfo.prenom} ${userInfo.nom} n'a pas encore publié de contenu</p>
+                        </div>`;
+                } else {
+                    // Afficher un header avec info utilisateur
+                    const header = document.createElement('div');
+                    header.style.cssText = `
+                        padding: 20px;
+                        background: var(--accent-gradient);
+                        border-radius: 16px;
+                        margin-bottom: 20px;
+                        color: white;
+                        text-align: center;
+                    `;
+                    header.innerHTML = `
+                        <div class="avatar" style="width: 60px; height: 60px; font-size: 24px; margin: 0 auto 12px; background: white; color: var(--accent-primary);">
+                            ${userInfo.prenom[0]}${userInfo.nom[0]}
+                        </div>
+                        <h2 style="margin-bottom: 8px;">${userInfo.prenom} ${userInfo.nom}</h2>
+                        <p style="opacity: 0.9; font-size: 14px; text-transform: capitalize;">
+                            ${userInfo.role} • ${userContent.length} publication${userContent.length > 1 ? 's' : ''}
+                        </p>
+                    `;
+                    document.getElementById('content-container').appendChild(header);
+                    
+                    displayContent(userContent);
+                }
+            } catch (error) {
+                console.error('Erreur chargement historique:', error);
+                document.getElementById('loader').style.display = 'none';
+                showToast('❌ Erreur de chargement');
+            }
+        }
+
+        // ✅ NOUVELLE FONCTION : RETOUR À L'ACCUEIL
+        window.backToHome = async function() {
+            document.getElementById('back-to-home-btn').style.display = 'none';
+            document.getElementById('loader').style.display = 'block';
+            document.getElementById('content-container').innerHTML = '';
+            isShowingUserHistory = false;
+            
+            await loadContent();
+        };
+
         // NAVIGATION
         document.querySelectorAll('.nav-btn[data-page]').forEach(btn => {
             btn.addEventListener('click', () => {
@@ -1368,12 +1264,6 @@
                 
                 document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
                 document.getElementById(`${page}-page`).classList.add('active');
-                
-                // Cacher le bouton retour si on change de page
-                if (page !== 'home') {
-                    backButton.classList.remove('show');
-                    currentViewUserId = null;
-                }
             });
         });
 
@@ -1434,6 +1324,13 @@
                 } else {
                     displayContent(allContent);
                 }
+
+                // ✅ CHARGER LES RÉACTIONS APRÈS LE CONTENU
+                if (currentUser) {
+                    await loadUserReactions();
+                    // Réafficher pour appliquer les couleurs
+                    displayContent(allContent);
+                }
             } catch (error) {
                 console.error('Erreur chargement contenu:', error);
                 document.getElementById('loader').innerHTML = 
@@ -1441,7 +1338,7 @@
             }
         }
 
-        // CHARGEMENT DES RÉACTIONS UTILISATEUR - FIX #1: Charger immédiatement
+        // CHARGEMENT DES RÉACTIONS UTILISATEUR
         async function loadUserReactions() {
             if (!currentUser) return;
             try {
@@ -1463,11 +1360,6 @@
                 videoReactions.data?.forEach(r => {
                     userReactionsCache[r.video_id] = r.reaction_type;
                 });
-
-                // FIX #1: Recharger l'affichage pour appliquer les couleurs
-                if (allContent.length > 0) {
-                    displayContent(allContent);
-                }
             } catch (error) {
                 console.error('Erreur chargement réactions utilisateur:', error);
             }
@@ -1521,7 +1413,6 @@
                     ${article.whatsapp_url ? `<button class="link-btn" onclick="window.open('${article.whatsapp_url}', '_blank')"><i class="fab fa-whatsapp"></i> WhatsApp</button>` : ''}
                 </div>` : '';
 
-            // FIX #1: Appliquer les couleurs immédiatement
             const userReaction = userReactionsCache[article.article_id];
             const totalComments = (article.commentaire_count || 0) + (article.reponse_count || 0);
 
@@ -1689,4 +1580,494 @@
             event.stopPropagation();
             const menu = document.getElementById(`options-${id}`);
             document.querySelectorAll('.options-menu').forEach(m => {
-                if (m !== menu) m.classList.remove('
+                if (m !== menu) m.classList.remove('show');
+            });
+            menu.classList.toggle('show');
+        };
+
+        document.addEventListener('click', () => {
+            document.querySelectorAll('.options-menu').forEach(m => m.classList.remove('show'));
+        });
+
+        window.editContent = function(id, type) {
+            window.location.href = type === 'article' ? `publier.html?id=${id}` : `video.html?id=${id}`;
+        };
+
+        window.deleteContent = async function(id, type) {
+            if (!confirm(`Supprimer ${type === 'article' ? 'cet article' : 'cette vidéo'} définitivement ?`)) return;
+            
+            try {
+                const table = type === 'article' ? 'articles' : 'videos';
+                const idField = type === 'article' ? 'article_id' : 'video_id';
+                
+                const { error } = await supabase.from(table).delete().eq(idField, id);
+                if (error) throw error;
+                
+                await loadContent();
+                showToast('✅ Suppression réussie');
+            } catch (error) {
+                console.error('Erreur suppression:', error);
+                showToast('❌ Erreur lors de la suppression');
+            }
+        };
+
+        window.handleReaction = async function(id, reactionType, contentType) {
+            if (!currentUser) {
+                showToast('⚠️ Connectez-vous pour réagir');
+                setTimeout(() => window.location.href = 'connexion.html', 1500);
+                return;
+            }
+
+            try {
+                const table = contentType === 'article' ? 'article_reactions' : 'video_reactions';
+                const idField = contentType === 'article' ? 'article_id' : 'video_id';
+
+                const { data: existing, error: fetchError } = await supabase
+                    .from(table)
+                    .select('reaction_id, reaction_type')
+                    .eq(idField, id)
+                    .eq('user_id', currentUser.id)
+                    .maybeSingle();
+
+                if (fetchError) throw fetchError;
+
+                if (existing) {
+                    await supabase.from(table).delete().eq('reaction_id', existing.reaction_id);
+                    
+                    if (existing.reaction_type !== reactionType) {
+                        await supabase.from(table).insert({
+                            [idField]: id,
+                            user_id: currentUser.id,
+                            reaction_type: reactionType
+                        });
+                        userReactionsCache[id] = reactionType;
+                    } else {
+                        delete userReactionsCache[id];
+                    }
+                } else {
+                    await supabase.from(table).insert({
+                        [idField]: id,
+                        user_id: currentUser.id,
+                        reaction_type: reactionType
+                    });
+                    userReactionsCache[id] = reactionType;
+                }
+
+                await loadContent();
+            } catch (error) {
+                console.error('Erreur réaction:', error);
+                showToast('❌ Erreur lors de la réaction');
+            }
+        };
+
+        window.toggleComments = async function(id, type) {
+            const container = document.getElementById(`comments-${type}-${id}`);
+            if (!container) return;
+
+            container.classList.toggle('show');
+
+            if (container.classList.contains('show') && container.innerHTML.trim() === '') {
+                container.innerHTML = '<div class="loader"><div class="spinner"></div></div>';
+                try {
+                    if (type === 'article' && window.CommentsWidget) {
+                        await window.CommentsWidget.render(container, id, null, currentUser, userProfile);
+                    } else if (type === 'video' && window.VideoCommentsWidget) {
+                        await window.VideoCommentsWidget.render(container, id, null, currentUser, userProfile);
+                    } else {
+                        container.innerHTML = '<div class="empty-state"><i class="fas fa-comments"></i><p>Module de commentaires non disponible</p></div>';
+                    }
+                } catch (error) {
+                    console.error('Erreur chargement commentaires:', error);
+                    container.innerHTML = '<p style="color: #ff4757; padding: 20px;">Erreur de chargement</p>';
+                }
+            }
+        };
+
+        window.viewReactions = function(id, type) {
+            if (type === 'article') {
+                window.location.href = `usereact.html?article_id=${id}`;
+            } else {
+                window.location.href = `videreact.html?video_id=${id}`;
+            }
+        };
+
+        window.shareContent = function(id, type) {
+            const url = `${window.location.origin}?${type}_id=${id}`;
+            if (navigator.share) {
+                navigator.share({
+                    title: `Market - ${type === 'article' ? 'Article' : 'Vidéo'}`,
+                    url: url
+                }).catch(err => console.log('Partage annulé'));
+            } else {
+                navigator.clipboard.writeText(url).then(() => {
+                    showToast('✅ Lien copié !');
+                });
+            }
+        };
+
+        // UTILITAIRES
+        function formatDate(dateString) {
+            const d = new Date(dateString);
+            const now = new Date();
+            const diff = now - d;
+            const minutes = Math.floor(diff / 60000);
+            const hours = Math.floor(diff / 3600000);
+            const days = Math.floor(diff / 86400000);
+
+            if (minutes < 1) return 'À l\'instant';
+            if (minutes < 60) return `Il y a ${minutes} min`;
+            if (hours < 24) return `Il y a ${hours}h`;
+            if (days < 7) return `Il y a ${days}j`;
+            
+            return d.toLocaleDateString('fr-FR', { day: 'numeric', month: 'short' });
+        }
+
+        async function loadNotificationCount() {
+            if (!currentUser) return;
+            const { count } = await supabase
+                .from('notifications')
+                .select('*', { count: 'exact', head: true })
+                .eq('user_id', currentUser.id)
+                .eq('read_status', false);
+            
+            const badge = document.getElementById('notif-badge');
+            if (count > 0) {
+                badge.textContent = count > 9 ? '9+' : count;
+                badge.style.display = 'block';
+            }
+        }
+
+        async function loadMessageCount() {
+            if (!currentUser) return;
+            const { count } = await supabase
+                .from('messages')
+                .select('*', { count: 'exact', head: true })
+                .eq('receiver_id', currentUser.id)
+                .eq('read_status', false);
+            
+            const badge = document.getElementById('message-badge');
+            if (count > 0) {
+                badge.textContent = count > 9 ? '9+' : count;
+                badge.style.display = 'block';
+            }
+        }
+
+        function setupRealtimeSubscriptions() {
+            if (!currentUser) return;
+
+            supabase.channel('public-changes')
+                .on('postgres_changes', {
+                    event: '*',
+                    schema: 'public',
+                    table: 'notifications',
+                    filter: `user_id=eq.${currentUser.id}`
+                }, () => loadNotificationCount())
+                .on('postgres_changes', {
+                    event: 'INSERT',
+                    schema: 'public',
+                    table: 'messages',
+                    filter: `receiver_id=eq.${currentUser.id}`
+                }, () => loadMessageCount())
+                .on('postgres_changes', {
+                    event: '*',
+                    schema: 'public',
+                    table: 'articles'
+                }, () => loadContent())
+                .on('postgres_changes', {
+                    event: '*',
+                    schema: 'public',
+                    table: 'videos'
+                }, () => loadContent())
+                .on('postgres_changes', {
+                    event: '*',
+                    schema: 'public',
+                    table: 'article_reactions'
+                }, () => {
+                    loadContent();
+                    loadUserReactions();
+                })
+                .on('postgres_changes', {
+                    event: '*',
+                    schema: 'public',
+                    table: 'video_reactions'
+                }, () => {
+                    loadContent();
+                    loadUserReactions();
+                })
+                .subscribe();
+
+            console.log('✅ Temps réel activé');
+        }
+
+        // MENU UTILISATEUR
+        document.getElementById('menu-btn').addEventListener('click', (e) => {
+            e.stopPropagation();
+            const existingMenu = document.getElementById('user-menu');
+            if (existingMenu) {
+                existingMenu.remove();
+                return;
+            }
+
+            const menu = document.createElement('div');
+            menu.id = 'user-menu';
+            menu.style.cssText = `
+                position: fixed;
+                top: calc(var(--navbar-height) + 8px);
+                right: 16px;
+                background: var(--bg-secondary);
+                border-radius: 16px;
+                box-shadow: var(--shadow-xl);
+                min-width: 240px;
+                overflow: hidden;
+                z-index: 1000;
+                border: 1px solid var(--border-color);
+                animation: slideDown 0.3s ease;
+            `;
+
+            const menuItems = [];
+
+            if (currentUser && userProfile) {
+                menuItems.push(
+                    `<div style="padding: 20px; border-bottom: 1px solid var(--border-color); background: linear-gradient(135deg, rgba(102, 126, 234, 0.05) 0%, rgba(118, 75, 162, 0.05) 100%);">
+                        <div style="display: flex; align-items: center; gap: 12px;">
+                            <div class="avatar" style="width: 48px; height: 48px; font-size: 18px;">
+                                ${userProfile.prenom[0]}${userProfile.nom[0]}
+                            </div>
+                            <div>
+                                <div style="font-weight: 700; color: var(--text-primary); font-size: 15px;">
+                                    ${userProfile.prenom} ${userProfile.nom}
+                                </div>
+                                <div style="font-size: 12px; color: var(--text-tertiary); text-transform: capitalize;">
+                                    ${userProfile.role}
+                                </div>
+                            </div>
+                        </div>
+                    </div>`,
+                    `<div class="options-menu-item" onclick="window.location.href='publier.html'">
+                        <i class="fas fa-edit"></i> Publier un article
+                    </div>`
+                );
+
+                if (userProfile.role === 'admin' || userProfile.role === 'adminpro') {
+                    menuItems.push(
+                        `<div class="options-menu-item" onclick="window.location.href='video.html'">
+                            <i class="fas fa-video"></i> Publier une vidéo
+                        </div>`
+                    );
+                }
+
+                menuItems.push(
+                    `<div style="height: 1px; background: var(--border-color); margin: 8px 0;"></div>`,
+                    `<div class="options-menu-item" onclick="window.location.href='profil.html'">
+                        <i class="fas fa-user"></i> Mon profil
+                    </div>`,
+                    `<div class="options-menu-item" onclick="window.location.href='parametres.html'">
+                        <i class="fas fa-cog"></i> Paramètres
+                    </div>`,
+                    `<div style="height: 1px; background: var(--border-color); margin: 8px 0;"></div>`,
+                    `<div class="options-menu-item delete" onclick="handleLogout()">
+                        <i class="fas fa-sign-out-alt"></i> Déconnexion
+                    </div>`
+                );
+            } else {
+                menuItems.push(
+                    `<div style="padding: 20px; text-align: center;">
+                        <i class="fas fa-user-circle" style="font-size: 48px; color: var(--text-tertiary); margin-bottom: 12px;"></i>
+                        <p style="color: var(--text-secondary); font-size: 14px; margin-bottom: 16px;">
+                            Connectez-vous pour accéder à toutes les fonctionnalités
+                        </p>
+                        <button onclick="window.location.href='connexion.html'" style="
+                            width: 100%;
+                            padding: 12px;
+                            background: var(--accent-gradient);
+                            border: none;
+                            border-radius: 12px;
+                            color: white;
+                            font-weight: 600;
+                            cursor: pointer;
+                            font-size: 14px;
+                        ">
+                            <i class="fas fa-sign-in-alt"></i> Se connecter
+                        </button>
+                    </div>`
+                );
+            }
+
+            menu.innerHTML = menuItems.join('');
+            document.body.appendChild(menu);
+
+            setTimeout(() => {
+                document.addEventListener('click', function closeMenu(e) {
+                    if (!menu.contains(e.target)) {
+                        menu.remove();
+                        document.removeEventListener('click', closeMenu);
+                    }
+                });
+            }, 0);
+        });
+
+        window.handleLogout = async function() {
+            if (confirm('Êtes-vous sûr de vouloir vous déconnecter ?')) {
+                await supabase.auth.signOut();
+                window.location.reload();
+            }
+        };
+
+        // SYSTÈME DE TOASTS
+        function showToast(message, duration = 3000) {
+            const toast = document.createElement('div');
+            toast.style.cssText = `
+                position: fixed;
+                bottom: 24px;
+                left: 50%;
+                transform: translateX(-50%) translateY(100px);
+                background: var(--bg-secondary);
+                color: var(--text-primary);
+                padding: 16px 24px;
+                border-radius: 12px;
+                box-shadow: var(--shadow-xl);
+                z-index: 10000;
+                font-weight: 600;
+                font-size: 14px;
+                transition: transform 0.3s cubic-bezier(0.68, -0.55, 0.265, 1.55);
+                border: 1px solid var(--border-color);
+            `;
+            toast.textContent = message;
+            document.body.appendChild(toast);
+
+            setTimeout(() => {
+                toast.style.transform = 'translateX(-50%) translateY(0)';
+            }, 10);
+
+            setTimeout(() => {
+                toast.style.transform = 'translateX(-50%) translateY(100px)';
+                setTimeout(() => toast.remove(), 300);
+            }, duration);
+        }
+
+        // GESTION DES VIDÉOS (Pause automatique lors du scroll)
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                const video = entry.target;
+                if (entry.isIntersecting) {
+                    video.controls = true;
+                } else {
+                    video.pause();
+                }
+            });
+        }, { threshold: 0.5 });
+
+        // Observer les vidéos après le chargement du contenu
+        function observeVideos() {
+            const videos = document.querySelectorAll('video');
+            videos.forEach(video => observer.observe(video));
+        }
+
+        // RACCOURCIS CLAVIER
+        document.addEventListener('keydown', (e) => {
+            if ((e.ctrlKey || e.metaKey) && e.key === 'k') {
+                e.preventDefault();
+                searchPanel.classList.toggle('show');
+                if (searchPanel.classList.contains('show')) {
+                    document.getElementById('search-input').focus();
+                }
+            }
+
+            if (e.key === 'Escape') {
+                searchPanel.classList.remove('show');
+                document.querySelectorAll('.options-menu').forEach(m => m.classList.remove('show'));
+                const userMenu = document.getElementById('user-menu');
+                if (userMenu) userMenu.remove();
+            }
+        });
+
+        // GESTION DES ERREURS GLOBALES
+        window.addEventListener('error', (e) => {
+            console.error('Erreur globale:', e.error);
+        });
+
+        window.addEventListener('unhandledrejection', (e) => {
+            console.error('Promesse rejetée:', e.reason);
+        });
+
+        // OPTIMISATION - Observer les vidéos après chaque chargement de contenu
+        const originalDisplayContent = displayContent;
+        displayContent = function(content) {
+            originalDisplayContent(content);
+            setTimeout(observeVideos, 100);
+        };
+
+        // DÉBOGAGE
+        console.log('%c🚀 Market App v5.0 - CONFORME SQL', 'color: #667eea; font-size: 24px; font-weight: bold;');
+        console.log('%c✅ Mise à jour conforme au schéma SQL Supabase', 'color: #22c55e; font-size: 14px;');
+        console.log('%c📊 Tables utilisées:', 'color: #667eea; font-weight: bold;');
+        console.log('  ✓ users_profile');
+        console.log('  ✓ articles');
+        console.log('  ✓ article_images');
+        console.log('  ✓ article_reactions');
+        console.log('  ✓ videos');
+        console.log('  ✓ video_reactions');
+        console.log('  ✓ sessions_commentaires (via commentaires.js)');
+        console.log('  ✓ session_reponses (via commentaires.js)');
+        console.log('  ✓ video_commentaires (via vidcomment.js)');
+        console.log('  ✓ video_reponses (via vidcomment.js)');
+        console.log('  ✓ notifications');
+        console.log('  ✓ messages');
+        console.log('%c🔧 Modifications apportées:', 'color: #667eea; font-weight: bold;');
+        console.log('  ✅ Utilisation des compteurs commentaire_count et reponse_count depuis la BDD');
+        console.log('  ✅ Suppression du cache commentCountsCache (données directes depuis SQL)');
+        console.log('  ✅ Suppression de la vue commentaires_count (non nécessaire avec les triggers)');
+        console.log('  ✅ Calcul total commentaires: commentaire_count + reponse_count');
+        console.log('  ✅ Gestion des réactions conforme aux tables article_reactions et video_reactions');
+        console.log('  ✅ Realtime optimisé avec un seul channel pour toutes les tables');
+        console.log('  ✅ Toasts pour feedback utilisateur amélioré');
+        console.log('%c⚡ Fonctionnalités:', 'color: #667eea; font-weight: bold;');
+        console.log('  ✅ Compteurs temps réel via triggers SQL');
+        console.log('  ✅ Réactions like, love, rire, colere');
+        console.log('  ✅ Système de commentaires et réponses');
+        console.log('  ✅ Permissions RLS (user, admin, adminpro)');
+        console.log('  ✅ Search articles/vidéos séparée');
+        console.log('  ✅ Mode sombre/clair');
+        console.log('  ✅ Responsive design');
+        console.log('  ✅ Pause vidéos auto au scroll');
+
+        // EXPORT POUR DÉBOGAGE
+        window.MarketApp = {
+            version: '5.0.0',
+            sqlCompliant: true,
+            currentUser,
+            userProfile,
+            allContent,
+            searchType,
+            reloadContent: loadContent,
+            showToast,
+            toggleDarkMode: () => themeToggle.click(),
+            debugInfo: {
+                tables: [
+                    'users_profile',
+                    'articles',
+                    'article_images',
+                    'article_reactions',
+                    'videos',
+                    'video_reactions',
+                    'sessions_commentaires',
+                    'session_reponses',
+                    'video_commentaires',
+                    'video_reponses',
+                    'notifications',
+                    'messages'
+                ],
+                features: [
+                    'Compteurs automatiques via triggers',
+                    'Réactions temps réel',
+                    'RLS multi-niveaux',
+                    'Realtime Supabase',
+                    'Commentaires imbriqués'
+                ]
+            }
+        };
+
+        console.log('%c💾 Accédez à window.MarketApp pour le debug', 'color: #667eea; font-weight: bold;');
+    </script>
+</body>
+    </html>
